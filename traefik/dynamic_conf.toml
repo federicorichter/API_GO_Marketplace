@@ -1,0 +1,20 @@
+[http]
+  [http.routers]
+    [http.routers.goapi]
+      rule = "Host(`newworld.localhost`) && (PathPrefix(`/user`) || PathPrefix(`/auth`) || PathPrefix(`/admin`) || PathPrefix(`/loginadmin`) )"
+      service = "goapi"
+      entryPoints = ["web"]
+
+    [http.routers.cppserver]
+      rule = "Host(`newworld.localhost`) && (PathPrefix(`/supplies`) || PathPrefix(`/alerts`))"
+      service = "cppserver"
+      entryPoints = ["web"]
+
+  [http.services]
+    [http.services.goapi.loadBalancer]
+      [[http.services.goapi.loadBalancer.servers]]
+        url = "http://goapi:3000"
+
+    [http.services.cppserver.loadBalancer]
+      [[http.services.cppserver.loadBalancer.servers]]
+        url = "http://cppserver:9045"

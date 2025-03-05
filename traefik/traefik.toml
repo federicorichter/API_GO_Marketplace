@@ -1,0 +1,14 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":8081"
+  [entryPoints.tcp]
+    address = ":9001"
+  [entryPoints.traefik]
+    address = ":8080"
+
+[providers]
+  [providers.file]
+    filename = "/etc/traefik/dynamic_conf.toml"
+
+[api]
+  insecure = true

@@ -1,0 +1,74 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v2.4
+    command:
+      - "--api.insecure=true"
+      - "--providers.file.filename=/etc/traefik/dynamic_conf.toml"
+      - "--entrypoints.web.address=:8081"
+      - "--entrypoints.tcp.address=:9001"
+      - "--entrypoints.traefik.address=:8080"
+    ports:
+      - "8081:8081"
+      - "9001:9001"
+      - "8080:8080"
+    volumes:
+      - "./traefik.toml:/etc/traefik/traefik.toml"
+      - "./dynamic_conf.toml:/etc/traefik/dynamic_conf.toml"
+    networks:
+      - traefik_newworld_network
+
+  goapi:
+    build:
+      context: ../fiberapi
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://admin:plottier45@db:5432/fiberapidb
+      PORT_API: :3000
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.goapi.rule=Host(`newworld.localhost`) && (PathPrefix(`/user`) || PathPrefix(`/auth`) || PathPrefix(`/admin`) PathPrefix('/loginadmin'))"
+      - "traefik.http.routers.goapi.entrypoints=web"
+    depends_on:
+      - traefik
+      - db
+    networks:
+      - traefik_newworld_network
+
+  cppserver:
+    build:
+      context: ../servercpp
+      dockerfile: Dockerfile
+    ports:
+      - "9045:9045"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cppserver.rule=Host(`newworld.localhost`) && (PathPrefix(`/supplies`) || PathPrefix(`/alerts`))"
+      - "traefik.http.routers.cppserver.entrypoints=web"
+    depends_on:
+      - traefik
+    networks:
+      - traefik_newworld_network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: plottier45
+      POSTGRES_DB: fiberapidb
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - traefik_newworld_network
+
+volumes:
+  pgdata:
+
+networks:
+  traefik_newworld_network:
+    driver: bridge
