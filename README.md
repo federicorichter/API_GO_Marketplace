@@ -1,4 +1,4 @@
-# API GO
+# API GO + Server C++
 
 
 ## 🔑 Application Description
@@ -7,7 +7,7 @@
   <img src="img/diagram.png"/>
 </p>
 
-Development of an API to manage resources saved in the Postgres database.
+Development of an API to manage resources saved in the Postgres database which is also connected to the C++ server that manages client requests for information using sockets + managmenet of resources using RocksDB. The C++ server also includes a Canny Edge Filter that can be applied to an image that is saved inside the server.
 
 - **Technology Stack**:
   - **Fiber**: Utilized for creating a high-performance HTTP server.
