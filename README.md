@@ -7,7 +7,7 @@
   <img src="img/diagram.png"/>
 </p>
 
-Our backend application will interface with the existing HPCPP project to access and trade the current **20%** of the supply levels. Key components include:
+Development of an API to manage resources saved in the Postgres database.
 
 - **Technology Stack**:
   - **Fiber**: Utilized for creating a high-performance HTTP server.
